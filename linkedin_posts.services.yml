@@ -1,0 +1,19 @@
+services:
+  logger.channel.linkedin_posts:
+    parent: logger.channel_base
+    arguments: ['linkedin_posts']
+
+  linkedin_posts.oauth:
+    class: Drupal\linkedin_posts\Service\LinkedinOauthManager
+    arguments:
+     - '@config.factory'
+     - '@state'
+     - '@logger.channel.linkedin_posts'
+     - 'linkedin_posts.settings'
+
+  linkedin_posts.client:
+    class: Drupal\linkedin_posts\Client\LinkedinClient
+    arguments:
+     - '@http_client'
+     - '@linkedin_posts.oauth'
+     - '@logger.channel.linkedin_posts'

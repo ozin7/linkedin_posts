@@ -1,0 +1,5 @@
+name: 'Linkedin posts'
+type: module
+description: 'Fetch posts from linkedin company profile'
+package: Custom
+core_version_requirement: ^10 || ^11

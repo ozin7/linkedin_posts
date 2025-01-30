@@ -1,0 +1,5 @@
+admin/config/services/linkedin:
+  title: Linkedin
+  parent: system.admin_config_services
+  route_name: linkedin_posts.settings
+  weight: 10

@@ -1,0 +1,19 @@
+linkedin_posts.settings:
+  path: '/admin/config/services/linkedin'
+  defaults:
+    _title: 'Linkedin settings'
+    _form: 'Drupal\linkedin_posts\Form\LinkedinSettingsForm'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE
+
+linkedin_posts.token:
+  path: '/linkedin-posts/token'
+  defaults:
+    _title: 'Linkedin Token'
+    _controller: '\Drupal\linkedin_posts\Controller\LinkedinPostsController::getToken'
+  requirements:
+    _custom_access: '\Drupal\linkedin_posts\Controller\LinkedinPostsController::access'
+  options:
+    _admin_route: TRUE

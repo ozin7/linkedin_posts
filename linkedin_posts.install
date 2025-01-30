@@ -1,0 +1,11 @@
+<?php
+
+use Drupal\linkedin_posts\Service\LinkedinOauthManager;
+
+/**
+ * Implements hook_uninstall().
+ */
+function linkedin_posts_uninstall() {
+  \Drupal::configFactory()->getEditable('linkedin_posts.settings')->delete();
+  \Drupal::state()->delete(LinkedinOauthManager::TOKEN_STORAGE);
+}
