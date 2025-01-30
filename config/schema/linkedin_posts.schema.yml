@@ -3,7 +3,7 @@ linkedin_posts.settings:
   type: config_object
   label: 'Linkedin posts settings'
   mapping:
-    company_id:
+    organization_id:
       type: string
       label: 'Company ID'
     client_id:

@@ -17,3 +17,12 @@ services:
      - '@http_client'
      - '@linkedin_posts.oauth'
      - '@logger.channel.linkedin_posts'
+
+  linkedin_posts.posts_manager:
+    class: Drupal\linkedin_posts\Service\LinkedinPostsManager
+    arguments:
+     - '@linkedin_posts.client'
+     - '@logger.channel.linkedin_posts'
+     - '@config.factory'
+     - 'linkedin_posts.settings'
+     - '@entity_type.manager'

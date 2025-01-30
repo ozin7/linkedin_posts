@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\linkedin_posts\Form;
 
-use Drupal\Core\Url;
-use GuzzleHttp\Client;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormStateInterface;
-use League\OAuth2\Client\Provider\LinkedIn;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\linkedin_posts\Service\LinkedinOauthManager;
-use Drupal\linkedin_posts\Service\LinkedinPostsManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -63,10 +59,10 @@ final class LinkedinSettingsForm extends ConfigFormBase
   public function buildForm(array $form, FormStateInterface $form_state): array
   {
     $config = $this->configFactory->get('linkedin_posts.settings');
-    $form['company_id'] = [
+    $form['organization_id'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Company Id'),
-      '#default_value' => $config->get('company_id'),
+      '#title' => $this->t('Organization Id'),
+      '#default_value' => $config->get('organization_id'),
       '#required' => TRUE,
     ];
     $form['client_id'] = [
@@ -97,7 +93,11 @@ final class LinkedinSettingsForm extends ConfigFormBase
         '#markup' => implode(', ', LinkedinOauthManager::SCOPE),
       ];
     }
-
+    $form['linkedin_redirects'] = [
+      '#type' => 'item',
+      '#title' => $this->t('LinkedIn App OAuth 2.0 settings'),
+      '#markup' => $this->t('Add Authorized redirect URLs to your LinkedIn app settings: @redirect', ['@redirect' => $this->linkedinOauthManager->getRedirectUrl()]),
+    ];
     $form['actions']['get_auth_token'] = [
       '#type' => 'submit',
       '#value' => $this->t('Fetch Access Token'),

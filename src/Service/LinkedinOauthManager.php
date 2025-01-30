@@ -22,7 +22,7 @@ class LinkedinOauthManager
    *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
-  private  $config;
+  private $config;
 
   public function __construct(
     private readonly ConfigFactoryInterface $configFactory,
@@ -73,11 +73,9 @@ class LinkedinOauthManager
       return $provider->getAccessToken('authorization_code', [
         'code' => $code
       ]);
-    }
-    catch (\Throwable $e) {
+    } catch (\Throwable $e) {
       $this->logger->error($e->getMessage());
     }
-
   }
   public function setTokenData(AccessTokenInterface $token): void
   {

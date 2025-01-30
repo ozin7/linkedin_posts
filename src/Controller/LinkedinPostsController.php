@@ -8,12 +8,10 @@ use Drupal\Core\Url;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Controller\ControllerBase;
-use League\OAuth2\Client\Provider\LinkedIn;
 use Symfony\Component\HttpFoundation\RequestStack;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\linkedin_posts\Service\LinkedinOauthManager;
-use Drupal\linkedin_posts\Service\LinkedinPostsManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

@@ -24,7 +24,7 @@ class LinkedinClient
     $urn = "urn:li:organization:$organizationId";
     $encoded_urn = rawurlencode($urn);
     try {
-      $response = $this->client->request('GET', 'https://api.linkedin.com/v2/ugcPosts?q=authors&authors=List(' .  $encoded_urn . ')', [
+      $response = $this->client->request('GET', 'https://api.linkedin.com/v2/ugcPosts?q=authors&authors=List(' .  $encoded_urn . ')&sortBy=CREATED', [
         'headers' => [
           'Authorization' => 'Bearer ' . $token,
           'X-Restli-Protocol-Version' => '2.0.0',
