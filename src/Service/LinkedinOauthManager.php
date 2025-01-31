@@ -75,6 +75,7 @@ class LinkedinOauthManager
       ]);
     } catch (\Throwable $e) {
       $this->logger->error($e->getMessage());
+      return null;
     }
   }
   public function setTokenData(AccessTokenInterface $token): void

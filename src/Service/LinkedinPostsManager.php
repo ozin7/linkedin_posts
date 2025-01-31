@@ -6,8 +6,10 @@ namespace Drupal\linkedin_posts\Service;
 
 use Psr\Log\LoggerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\linkedin_posts\Client\LinkedinClient;
+use Drupal\linkedin_posts\Client\ShareMediaCategory;
 
 class LinkedinPostsManager
 {
@@ -37,18 +39,15 @@ class LinkedinPostsManager
       $posts = $this->linkedinClient->getOrganizationPosts($organizationId);
       if (!empty($posts['elements'])) {
         foreach ($posts['elements'] as $post) {
-          $body = $post['specificContent']['com.linkedin.ugc.ShareContent']['shareCommentary']['text'];
-          $title = $this->truncateWords($body);
-          $values = [
-            'created' => (int) ((int) $post['firstPublishedAt'] / 1000),
-            'type' => 'linkedin_post',
-            'title' => $title,
-            'body' => $body,
-            'field_post_id' => $post['id'],
-          ];
-          $newPost = $nodeStorage->create($values);
-          $newPost->save();
-          $imported++;
+          if ($this->postExists($post['id'])) {
+            continue;
+          }
+          $values = $this->prepareValues($post);
+          if ($values) {
+            $newPost = $nodeStorage->create($values);
+            $newPost->save();
+            $imported++;
+          }
         }
       }
     }
@@ -56,14 +55,41 @@ class LinkedinPostsManager
     return $imported;
   }
 
+  private function prepareValues(array $post): array
+  {
+    $shareContent = $post['specificContent']['com.linkedin.ugc.ShareContent'];
+    $media = $shareContent['media'];
+    $sharedMediaCategory = ShareMediaCategory::from($shareContent['shareMediaCategory']);
+    $body = $shareContent['shareCommentary']['text'];
+    $date = DrupalDateTime::createFromTimestamp((int) ((int) $post['firstPublishedAt'] / 1000));
+    $title = $this->truncateWords($body);
+    $cookedTitle = sprintf('%s - %s', $date->format('d.m.Y'), $title);
+    $values = [
+      'created' => $date->getTimestamp(),
+      'type' => 'linkedin_post',
+      'title' => $cookedTitle,
+      'body' => $body,
+      'field_post_id' => $post['id'],
+    ];
+
+    return $values;
+  }
+
   function truncateWords($text, $limit = 5, $suffix = '...')
   {
-    $words = explode(' ', strip_tags($text)); // Remove HTML tags and split into words.
-
+    $words = explode(' ', strip_tags($text));
     if (count($words) > $limit) {
       return implode(' ', array_slice($words, 0, $limit)) . $suffix;
     }
 
-    return $text; // Return full text if it's within the limit.
+    return $text;
+  }
+
+  private function postExists($postId): bool
+  {
+    $query = $this->entityTypeManager->getStorage('node')->getQuery();
+    $query->condition('field_post_id', $postId);
+    $query->accessCheck(true);
+    return (bool) $query->execute();
   }
 }
