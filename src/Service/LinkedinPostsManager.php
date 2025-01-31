@@ -13,6 +13,8 @@ use Drupal\linkedin_posts\Client\ShareMediaCategory;
 
 class LinkedinPostsManager
 {
+  public const LINKEDIN_CONTENT_TYPE = 'linkedin_post';
+
   /**
    * Config.
    *
@@ -66,12 +68,22 @@ class LinkedinPostsManager
     $cookedTitle = sprintf('%s - %s', $date->format('d.m.Y'), $title);
     $values = [
       'created' => $date->getTimestamp(),
-      'type' => 'linkedin_post',
+      'type' => self::LINKEDIN_CONTENT_TYPE,
       'title' => $cookedTitle,
       'body' => $body,
       'field_post_id' => $post['id'],
     ];
-
+    if (!empty($media)) {
+      $firstMedia = reset($media);
+      if (!empty($firstMedia['thumbnails'])) {
+        $firstThumbnail = reset($firstMedia['thumbnails']);
+        $values['field_thumbnail'] = $firstThumbnail['url'];
+      }
+    }
+    // Process LinkedIn articles which have extra entity.
+    if ($sharedMediaCategory == ShareMediaCategory::URN_REFERENCE) {
+      // @todo implement linkedin article processing.
+    }
     return $values;
   }
 

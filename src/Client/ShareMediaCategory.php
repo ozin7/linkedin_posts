@@ -12,10 +12,18 @@ enum ShareMediaCategory: string
   case NONE = 'NONE'; // No media attached.
   case IMAGE = 'IMAGE'; // Single image post.
   case VIDEO = 'VIDEO'; // Video post.
+  case LIVE_VIDEO = 'LIVE_VIDEO'; // Video post.
   case ARTICLE = 'ARTICLE'; // Shared article or link.
   case DOCUMENT = 'DOCUMENT'; // Uploaded document (e.g., PDF).
   case CAROUSEL = 'CAROUSEL'; // Multiple images (Carousel).
   case URN_REFERENCE = 'URN_REFERENCE'; // Linkedin article with title and body.
+  case RICH = 'RICH';
+  case LEARNING_COURSE = 'LEARNING_COURSE';
+  case JOB = 'JOB';
+  case QUESTION = 'QUESTION';
+  case ANSWER = 'ANSWER';
+  case TOPIC = 'TOPIC';
+  case NATIVE_DOCUMENT = 'NATIVE_DOCUMENT';
 
   /**
    * Get all enum values as an array.
