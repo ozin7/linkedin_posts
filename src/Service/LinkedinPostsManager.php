@@ -11,8 +11,10 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\linkedin_posts\Client\LinkedinClient;
 use Drupal\linkedin_posts\Client\ShareMediaCategory;
 
-class LinkedinPostsManager
-{
+/**
+ * Linkedin posts manager.
+ */
+class LinkedinPostsManager {
   public const LINKEDIN_CONTENT_TYPE = 'linkedin_post';
 
   /**
@@ -27,13 +29,15 @@ class LinkedinPostsManager
     private readonly LoggerInterface $logger,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly string $configName,
-    private readonly EntityTypeManagerInterface $entityTypeManager
+    private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {
     $this->config = $this->configFactory->get($configName);
   }
 
-  public function importOrganizationPosts(): int
-  {
+  /**
+   * Import organization posts.
+   */
+  public function importOrganizationPosts(): int {
     $imported = 0;
     $nodeStorage = $this->entityTypeManager->getStorage('node');
     $organizationId = $this->config->get('organization_id');
@@ -57,8 +61,10 @@ class LinkedinPostsManager
     return $imported;
   }
 
-  private function prepareValues(array $post): array
-  {
+  /**
+   * Prepare values.
+   */
+  private function prepareValues(array $post): array {
     $shareContent = $post['specificContent']['com.linkedin.ugc.ShareContent'];
     $media = $shareContent['media'];
     $sharedMediaCategory = ShareMediaCategory::from($shareContent['shareMediaCategory']);
@@ -87,8 +93,10 @@ class LinkedinPostsManager
     return $values;
   }
 
-  function truncateWords($text, $limit = 5, $suffix = '...')
-  {
+  /**
+   * Truncate words.
+   */
+  public function truncateWords($text, $limit = 5, $suffix = '...') {
     $words = explode(' ', strip_tags($text));
     if (count($words) > $limit) {
       return implode(' ', array_slice($words, 0, $limit)) . $suffix;
@@ -97,11 +105,14 @@ class LinkedinPostsManager
     return $text;
   }
 
-  private function postExists($postId): bool
-  {
+  /**
+   * Check if post exists.
+   */
+  private function postExists($postId): bool {
     $query = $this->entityTypeManager->getStorage('node')->getQuery();
     $query->condition('field_post_id', $postId);
-    $query->accessCheck(true);
+    $query->accessCheck(TRUE);
     return (bool) $query->execute();
   }
+
 }

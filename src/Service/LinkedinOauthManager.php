@@ -11,8 +11,10 @@ use League\OAuth2\Client\Provider\LinkedIn;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 
-class LinkedinOauthManager
-{
+/**
+ * Linkedin Oauth manager.
+ */
+class LinkedinOauthManager {
   public const SECURE_STATE = 'linkedin.token.state';
   public const TOKEN_STORAGE = 'linkedin_posts.token';
   public const SCOPE = ['r_organization_social'];
@@ -28,34 +30,41 @@ class LinkedinOauthManager
     private readonly ConfigFactoryInterface $configFactory,
     private readonly StateInterface $state,
     private readonly LoggerInterface $logger,
-    private string $configName
+    private string $configName,
   ) {
     $this->config = $this->configFactory->get($configName);
   }
 
-  public function getClientId(): ?string
-  {
-    return $this->config->get('client_id') ?: null;
+  /**
+   * Get client id.
+   */
+  public function getClientId(): ?string {
+    return $this->config->get('client_id') ?: NULL;
   }
 
-  public function getClientSecret(): ?string
-  {
-    return $this->config->get('client_secret') ?: null;
+  /**
+   * Get client secret.
+   */
+  public function getClientSecret(): ?string {
+    return $this->config->get('client_secret') ?: NULL;
   }
 
-  public function getRedirectUrl(): ?string
-  {
-    return Url::fromRoute('linkedin_posts.token', [], ['absolute' => true])->toString();
+  /**
+   * Get redirect URL.
+   */
+  public function getRedirectUrl(): ?string {
+    return Url::fromRoute('linkedin_posts.token', [], ['absolute' => TRUE])->toString();
   }
 
   /**
    * Get Linkedin provider.
    */
-  public function getLinkedInProvider(): ?LinkedIn
-  {
+  public function getLinkedInProvider(): ?LinkedIn {
     $clientId = $this->getClientId();
     $clientSecret = $this->getClientSecret();
-    if (!$clientId || !$clientSecret) return null;
+    if (!$clientId || !$clientSecret) {
+      return NULL;
+    }
 
     try {
       return new LinkedIn([
@@ -63,29 +72,38 @@ class LinkedinOauthManager
         'clientSecret' => $clientSecret,
         'redirectUri' => $this->getRedirectUrl(),
       ]);
-    } catch (\Throwable $e) {
+    }
+    catch (\Throwable $e) {
       $this->logger->error($e->getMessage());
     }
 
-    return null;
+    return NULL;
   }
 
-  public function getAccessToken(string $code): ?AccessTokenInterface
-  {
+  /**
+   * Get access token.
+   */
+  public function getAccessToken(string $code): ?AccessTokenInterface {
     $provider = $this->getLinkedInProvider();
-    if (!$provider) return null;
+    if (!$provider) {
+      return NULL;
+    }
 
     try {
       return $provider->getAccessToken('authorization_code', [
-        'code' => $code
+        'code' => $code,
       ]);
-    } catch (\Throwable $e) {
+    }
+    catch (\Throwable $e) {
       $this->logger->error($e->getMessage());
-      return null;
+      return NULL;
     }
   }
-  public function setTokenData(AccessTokenInterface $token): void
-  {
+
+  /**
+   * Set token data.
+   */
+  public function setTokenData(AccessTokenInterface $token): void {
     $tokenData = [
       'token' => $token->getToken(),
       'expires' => $token->getExpires(),
@@ -94,26 +112,39 @@ class LinkedinOauthManager
     ];
     $this->state->set(self::TOKEN_STORAGE, $tokenData);
   }
-  public function getTokenData(): ?array
-  {
-    return $this->state->get(self::TOKEN_STORAGE) ?: null;
+
+  /**
+   * Get token data.
+   */
+  public function getTokenData(): ?array {
+    return $this->state->get(self::TOKEN_STORAGE) ?: NULL;
   }
-  public function getToken(): ?string
-  {
+
+  /**
+   * Get token.
+   */
+  public function getToken(): ?string {
     $data = $this->getTokenData();
-    if (!$data) return null;
-
-    if ($this->tokenIsExpired($data)) return null;
-
-    return $data ? $data['token'] : null;
-  }
-
-  private function tokenIsExpired(array $tokenData): bool
-  {
-    if ($tokenData['expires'] < time()) {
-      return true;
+    if (!$data) {
+      return NULL;
     }
 
-    return false;
+    if ($this->tokenIsExpired($data)) {
+      return NULL;
+    }
+
+    return $data ? $data['token'] : NULL;
   }
+
+  /**
+   * Check if token is expired.
+   */
+  private function tokenIsExpired(array $tokenData): bool {
+    if ($tokenData['expires'] < time()) {
+      return TRUE;
+    }
+
+    return FALSE;
+  }
+
 }

@@ -7,16 +7,23 @@ namespace Drupal\linkedin_posts\Client;
 /**
  * Enum representing possible Share Media Categories for LinkedIn posts.
  */
-enum ShareMediaCategory: string
-{
-  case NONE = 'NONE'; // No media attached.
-  case IMAGE = 'IMAGE'; // Single image post.
-  case VIDEO = 'VIDEO'; // Video post.
-  case LIVE_VIDEO = 'LIVE_VIDEO'; // Video post.
-  case ARTICLE = 'ARTICLE'; // Shared article or link.
-  case DOCUMENT = 'DOCUMENT'; // Uploaded document (e.g., PDF).
-  case CAROUSEL = 'CAROUSEL'; // Multiple images (Carousel).
-  case URN_REFERENCE = 'URN_REFERENCE'; // Linkedin article with title and body.
+enum ShareMediaCategory: string {
+  // No media attached.
+  case NONE = 'NONE';
+  // Single image post.
+  case IMAGE = 'IMAGE';
+  // Video post.
+  case VIDEO = 'VIDEO';
+  // Video post.
+  case LIVE_VIDEO = 'LIVE_VIDEO';
+  // Shared article or link.
+  case ARTICLE = 'ARTICLE';
+  // Uploaded document (e.g., PDF).
+  case DOCUMENT = 'DOCUMENT';
+  // Multiple images (Carousel).
+  case CAROUSEL = 'CAROUSEL';
+  // Linkedin article with title and body.
+  case URN_REFERENCE = 'URN_REFERENCE';
   case RICH = 'RICH';
   case LEARNING_COURSE = 'LEARNING_COURSE';
   case JOB = 'JOB';
@@ -31,16 +38,18 @@ enum ShareMediaCategory: string
    * @return string[]
    *   Array of all possible share media categories.
    */
-  public static function getValues(): array
-  {
+  public static function getValues(): array {
     return array_column(ShareMediaCategory::cases(), 'value');
   }
 
-  public function hasThumbnail(): bool
-  {
+  /**
+   *
+   */
+  public function hasThumbnail(): bool {
     return match ($this) {
-      ShareMediaCategory::IMAGE, ShareMediaCategory::VIDEO, ShareMediaCategory::ARTICLE, ShareMediaCategory::DOCUMENT => true,
-      default => false,
+      ShareMediaCategory::IMAGE, ShareMediaCategory::VIDEO, ShareMediaCategory::ARTICLE, ShareMediaCategory::DOCUMENT => TRUE,
+      default => FALSE,
     };
   }
+
 }

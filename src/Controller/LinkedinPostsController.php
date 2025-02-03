@@ -17,22 +17,20 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Returns responses for Linkedin posts routes.
  */
-final class LinkedinPostsController extends ControllerBase
-{
+final class LinkedinPostsController extends ControllerBase {
 
   /**
    * The controller constructor.
    */
   public function __construct(
     private readonly RequestStack $requestStack,
-    private readonly LinkedinOauthManager $linkedinOauthManager
+    private readonly LinkedinOauthManager $linkedinOauthManager,
   ) {}
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container): self
-  {
+  public static function create(ContainerInterface $container): self {
     return new self(
       $container->get('request_stack'),
       $container->get('linkedin_posts.oauth')
@@ -42,8 +40,7 @@ final class LinkedinPostsController extends ControllerBase
   /**
    * Builds the response.
    */
-  public function getToken(): RedirectResponse
-  {
+  public function getToken(): RedirectResponse {
     $currentRequest = $this->requestStack->getCurrentRequest();
     $code = $currentRequest->get('code');
     if (empty($code)) {
@@ -58,6 +55,9 @@ final class LinkedinPostsController extends ControllerBase
     return new RedirectResponse($url);
   }
 
+  /**
+   * Access callback.
+   */
   public function access(AccountInterface $account) {
     $currentRequest = $this->requestStack->getCurrentRequest();
     $state = $currentRequest->get('state');

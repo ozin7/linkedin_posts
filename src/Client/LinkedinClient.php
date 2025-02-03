@@ -8,23 +8,30 @@ use Psr\Log\LoggerInterface;
 use GuzzleHttp\ClientInterface;
 use Drupal\linkedin_posts\Service\LinkedinOauthManager;
 
-class LinkedinClient
-{
+/**
+ * Linkedin client.
+ */
+class LinkedinClient {
+
   public function __construct(
     private readonly ClientInterface $client,
     private readonly LinkedinOauthManager $oauthManager,
-    private readonly LoggerInterface $logger
+    private readonly LoggerInterface $logger,
   ) {}
 
-  public function getOrganizationPosts(string $organizationId): array
-  {
+  /**
+   * Get organization posts.
+   */
+  public function getOrganizationPosts(string $organizationId): array {
     $token = $this->oauthManager->getToken();
-    if (!$token) return [];
+    if (!$token) {
+      return [];
+    }
 
     $urn = "urn:li:organization:$organizationId";
     $encoded_urn = rawurlencode($urn);
     try {
-      $response = $this->client->request('GET', 'https://api.linkedin.com/v2/ugcPosts?q=authors&authors=List(' .  $encoded_urn . ')&sortBy=CREATED', [
+      $response = $this->client->request('GET', 'https://api.linkedin.com/v2/ugcPosts?q=authors&authors=List(' . $encoded_urn . ')&sortBy=CREATED', [
         'headers' => [
           'Authorization' => 'Bearer ' . $token,
           'X-Restli-Protocol-Version' => '2.0.0',
@@ -32,7 +39,8 @@ class LinkedinClient
       ]);
 
       return json_decode($response->getBody()->getContents(), TRUE);
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $this->logger->error('Error fetching LinkedIn posts: @message', [
         '@message' => $e->getMessage(),
       ]);

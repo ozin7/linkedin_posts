@@ -15,13 +15,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Configure Linkedin posts settings for this site.
  */
-final class LinkedinSettingsForm extends ConfigFormBase
-{
+final class LinkedinSettingsForm extends ConfigFormBase {
 
   public function __construct(
     ConfigFactoryInterface $config_factory,
     protected $typedConfigManager,
-    private readonly LinkedinOauthManager $linkedinOauthManager
+    private readonly LinkedinOauthManager $linkedinOauthManager,
   ) {
     parent::__construct($config_factory, $typedConfigManager);
   }
@@ -29,35 +28,32 @@ final class LinkedinSettingsForm extends ConfigFormBase
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container)
-  {
+  public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
       $container->get('config.typed'),
       $container->get('linkedin_posts.oauth'),
     );
   }
+
   /**
    * {@inheritdoc}
    */
-  public function getFormId(): string
-  {
+  public function getFormId(): string {
     return 'linkedin_posts_linkedin_settings';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames(): array
-  {
+  protected function getEditableConfigNames(): array {
     return ['linkedin_posts.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state): array
-  {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->configFactory->get('linkedin_posts.settings');
     $form['organization_id'] = [
       '#type' => 'textfield',
@@ -112,16 +108,7 @@ final class LinkedinSettingsForm extends ConfigFormBase
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state): void
-  {
-    parent::validateForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state): void
-  {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $values = $form_state->cleanValues()->getValues();
     $this->config('linkedin_posts.settings')
       ->setData($values)
@@ -129,8 +116,10 @@ final class LinkedinSettingsForm extends ConfigFormBase
     parent::submitForm($form, $form_state);
   }
 
-  public function getNewLinkedinToken(array &$form, FormStateInterface $form_state)
-  {
+  /**
+   * Fetches a new LinkedIn access token.
+   */
+  public function getNewLinkedinToken(array &$form, FormStateInterface $form_state) {
     $this->submitForm($form, $form_state);
     $config = $this->config('linkedin_posts.settings');
     if ($config->get('client_id') && $config->get('client_secret')) {
@@ -142,7 +131,8 @@ final class LinkedinSettingsForm extends ConfigFormBase
       $authUrl = $provider->getAuthorizationUrl($options);
       $_SESSION['oauth2state'] = $provider->getState();
       $form_state->setResponse(new TrustedRedirectResponse($authUrl));
-    } else {
+    }
+    else {
       $this->messenger()->addWarning($this->t('Please provide client id and client secret or save the configuration first.'));
     }
   }
