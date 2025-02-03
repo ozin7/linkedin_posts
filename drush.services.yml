@@ -1,6 +1,6 @@
 services:
   linkedin_posts.fetch_all:
-    class: Drupal\linkedin_posts\Command\LinkedinCompanyPostsCommand
+    class: Drupal\linkedin_posts\Command\ImportCompanyPostsCommand
     arguments: ['@linkedin_posts.posts_manager']
     tags:
       - { name: console.command }

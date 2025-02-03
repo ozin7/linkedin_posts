@@ -46,9 +46,13 @@ final class LinkedinPostsController extends ControllerBase
   {
     $currentRequest = $this->requestStack->getCurrentRequest();
     $code = $currentRequest->get('code');
+    if (empty($code)) {
+      $this->messenger()->addError($this->t('Invalid code.'));
+    }
     $token = $this->linkedinOauthManager->getAccessToken($code);
     if ($token instanceof AccessTokenInterface) {
       $this->linkedinOauthManager->setTokenData($token);
+      $this->messenger()->addStatus($this->t('Token has been saved.'));
     }
     $url = Url::fromRoute('linkedin_posts.settings')->toString();
     return new RedirectResponse($url);

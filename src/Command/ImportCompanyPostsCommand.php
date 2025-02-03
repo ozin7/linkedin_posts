@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
   description: '',
   aliases: ['lcfa'],
 )]
-final class LinkedinCompanyPostsCommand extends Command {
+final class ImportCompanyPostsCommand extends Command {
 
   /**
    * Constructs a LinkedinPostsCommand object.

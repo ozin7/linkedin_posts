@@ -57,11 +57,17 @@ class LinkedinOauthManager
     $clientSecret = $this->getClientSecret();
     if (!$clientId || !$clientSecret) return null;
 
-    return new LinkedIn([
-      'clientId' => $clientId,
-      'clientSecret' => $clientSecret,
-      'redirectUri' => $this->getRedirectUrl(),
-    ]);
+    try {
+      return new LinkedIn([
+        'clientId' => $clientId,
+        'clientSecret' => $clientSecret,
+        'redirectUri' => $this->getRedirectUrl(),
+      ]);
+    } catch (\Throwable $e) {
+      $this->logger->error($e->getMessage());
+    }
+
+    return null;
   }
 
   public function getAccessToken(string $code): ?AccessTokenInterface
