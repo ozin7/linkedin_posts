@@ -15,6 +15,7 @@ use Drupal\linkedin_posts\Client\ShareMediaCategory;
  * Linkedin posts manager.
  */
 class LinkedinPostsManager {
+
   public const LINKEDIN_CONTENT_TYPE = 'linkedin_post';
 
   /**
@@ -62,9 +63,32 @@ class LinkedinPostsManager {
   }
 
   /**
+   * Truncate words.
+   */
+  private function truncateWords($text, $limit = 5, $suffix = '...') {
+    $words = explode(' ', strip_tags($text));
+    if (count($words) > $limit) {
+      return implode(' ', array_slice($words, 0, $limit)) . $suffix;
+    }
+
+    return $text;
+  }
+
+  /**
+   * Check if post exists.
+   */
+  private function postExists($postId): bool {
+    $query = $this->entityTypeManager->getStorage('node')->getQuery();
+    $query->condition('field_post_id', $postId);
+    $query->accessCheck(TRUE);
+    return (bool) $query->execute();
+  }
+
+  /**
    * Prepare values.
    */
-  private function prepareValues(array $post): array {
+  private function prepareValues(array $post): array
+  {
     $shareContent = $post['specificContent']['com.linkedin.ugc.ShareContent'];
     $media = $shareContent['media'];
     $sharedMediaCategory = ShareMediaCategory::from($shareContent['shareMediaCategory']);
@@ -91,28 +115,6 @@ class LinkedinPostsManager {
       // @todo implement linkedin article processing.
     }
     return $values;
-  }
-
-  /**
-   * Truncate words.
-   */
-  public function truncateWords($text, $limit = 5, $suffix = '...') {
-    $words = explode(' ', strip_tags($text));
-    if (count($words) > $limit) {
-      return implode(' ', array_slice($words, 0, $limit)) . $suffix;
-    }
-
-    return $text;
-  }
-
-  /**
-   * Check if post exists.
-   */
-  private function postExists($postId): bool {
-    $query = $this->entityTypeManager->getStorage('node')->getQuery();
-    $query->condition('field_post_id', $postId);
-    $query->accessCheck(TRUE);
-    return (bool) $query->execute();
   }
 
 }

@@ -20,3 +20,8 @@ field_thumbnail - text
 5. If token is fetched then you will find Token Expiration Date information on the settings form.
 6. Create LinkedIn post content type with field ids provided above.
 7. Run drush command `drush linkedin:company_fetch_all` - it will fetch 10 latest posts.
+
+## Refresh token
+There is a cron job which automatically get a new access token using refresh token.
+
+Also you can configure cron on your server and use drush command: `drush linkedin_posts:refresh_token`

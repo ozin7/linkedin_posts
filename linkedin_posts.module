@@ -1,0 +1,12 @@
+<?php
+
+/**
+ * Implements hook_cron().
+ */
+function linkedin_posts_cron() {
+  /** @var \Drupal\linkedin_posts\Service\LinkedinOauthManager $linkedinOauth */
+  $linkedinOauth = \Drupal::service('linkedin_posts.oauth');
+  if ($linkedinOauth->needTokenRefresh()) {
+    $linkedinOauth->refreshToken();
+  }
+}

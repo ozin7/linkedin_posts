@@ -4,3 +4,9 @@ services:
     arguments: ['@linkedin_posts.posts_manager']
     tags:
       - { name: console.command }
+
+  linkedin_posts.refresh_token:
+    class: Drupal\linkedin_posts\Command\RefreshTokenCommand
+    arguments: ['@linkedin_posts.oauth']
+    tags:
+      - { name: console.command }

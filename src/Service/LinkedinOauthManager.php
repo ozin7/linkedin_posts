@@ -9,6 +9,7 @@ use Psr\Log\LoggerInterface;
 use Drupal\Core\State\StateInterface;
 use League\OAuth2\Client\Provider\LinkedIn;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 
 /**
@@ -139,12 +140,53 @@ class LinkedinOauthManager {
   /**
    * Check if token is expired.
    */
-  private function tokenIsExpired(array $tokenData): bool {
-    if ($tokenData['expires'] < time()) {
-      return TRUE;
-    }
+  public function tokenIsExpired(array $tokenData): bool {
+    $expireDate = DrupalDateTime::createFromTimestamp($tokenData['expires']);
+    $now = new DrupalDateTime();
+    return $expireDate->getTimestamp() < $now->getTimestamp();
+  }
 
-    return FALSE;
+  /**
+   * Get new access token with refresh token.
+   */
+  public function getNewAccessTokenWithRefreshToken(array $tokenData): ?AccessTokenInterface {
+    $provider = $this->getLinkedInProvider();
+    if (!$provider) {
+      return NULL;
+    }
+    $params = [
+      'refresh_token' => $tokenData['refreshToken'],
+      'client_id' =>  $this->getClientId(),
+      'client_secret' => $this->getClientSecret(),
+    ];
+    try {
+      return $provider->getAccessToken('refresh_token', $params);
+    } catch (\Throwable $e) {
+      $this->logger->error($e->getMessage());
+      return NULL;
+    }
+  }
+
+  /**
+   * Refresh token.
+   */
+  public function refreshToken(): bool {
+    $tokenData = $this->getTokenData();
+    if (!$tokenData) return FALSE;
+    $newToken = $this->getNewAccessTokenWithRefreshToken($tokenData);
+    if (!$newToken) return FALSE;
+
+    $this->setTokenData($newToken);
+    return TRUE;
+  }
+
+  /**
+   * Check if token needs refresh.
+   */
+  public function needTokenRefresh(): bool {
+    $tokenData = $this->getTokenData();
+    if (!$tokenData) return FALSE;
+    return $this->tokenIsExpired($tokenData);
   }
 
 }

@@ -101,7 +101,9 @@ final class LinkedinSettingsForm extends ConfigFormBase {
       '#button_type' => 'secondary',
       '#weight' => 100,
     ];
-
+    if ($this->linkedinOauthManager->needTokenRefresh()) {
+      $this->messenger()->addError($this->t('The access token has expired. Please fetch a new one.'));
+    }
     return parent::buildForm($form, $form_state);
   }
 
@@ -124,6 +126,11 @@ final class LinkedinSettingsForm extends ConfigFormBase {
     $config = $this->config('linkedin_posts.settings');
     if ($config->get('client_id') && $config->get('client_secret')) {
       $provider = $this->linkedinOauthManager->getLinkedInProvider();
+      if (!$provider) {
+        $this->messenger()->addError($this->t('Failed to get LinkedIn provider.'));
+        $this->messenger()->addWarning($this->t('Please provide client id and client secret or save the configuration first.'));
+        return;
+      }
       $options = [
         'state' => LinkedinOauthManager::SECURE_STATE,
         'scope' => LinkedinOauthManager::SCOPE,
