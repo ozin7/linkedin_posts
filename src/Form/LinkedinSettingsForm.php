@@ -19,8 +19,8 @@ final class LinkedinSettingsForm extends ConfigFormBase {
 
   public function __construct(
     ConfigFactoryInterface $config_factory,
-    protected $typedConfigManager = NULL,
     private readonly LinkedinOauthManager $linkedinOauthManager,
+    protected $typedConfigManager = NULL,
   ) {
     parent::__construct($config_factory, $typedConfigManager);
   }
@@ -31,8 +31,8 @@ final class LinkedinSettingsForm extends ConfigFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
-      $container->get('config.typed'),
       $container->get('linkedin_posts.oauth'),
+      $container->get('config.typed'),
     );
   }
 
