@@ -19,7 +19,7 @@ final class LinkedinSettingsForm extends ConfigFormBase {
 
   public function __construct(
     ConfigFactoryInterface $config_factory,
-    protected $typedConfigManager,
+    protected $typedConfigManager = NULL,
     private readonly LinkedinOauthManager $linkedinOauthManager,
   ) {
     parent::__construct($config_factory, $typedConfigManager);
