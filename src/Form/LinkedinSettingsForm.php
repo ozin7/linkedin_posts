@@ -7,7 +7,6 @@ namespace Drupal\linkedin_posts\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\linkedin_posts\Service\LinkedinOauthManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -17,23 +16,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class LinkedinSettingsForm extends ConfigFormBase {
 
-  public function __construct(
-    ConfigFactoryInterface $config_factory,
-    private readonly LinkedinOauthManager $linkedinOauthManager,
-    protected $typedConfigManager = NULL,
-  ) {
-    parent::__construct($config_factory, $typedConfigManager);
-  }
+  private readonly LinkedinOauthManager $linkedinOauthManager;
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('config.factory'),
-      $container->get('linkedin_posts.oauth'),
-      $container->get('config.typed'),
-    );
+    $instance = parent::create($container);
+    $instance->linkedinOauthManager = $container->get('linkedin_posts.oauth');
+    return $instance;
   }
 
   /**

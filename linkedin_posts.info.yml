@@ -2,4 +2,5 @@ name: 'Linkedin posts'
 type: module
 description: 'Fetch posts from linkedin company profile'
 package: Social
+configure: linkedin_posts.settings
 core_version_requirement: ^10 || ^11
