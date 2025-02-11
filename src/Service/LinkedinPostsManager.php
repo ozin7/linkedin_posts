@@ -104,6 +104,7 @@ class LinkedinPostsManager {
       'body' => $body,
       'field_post_id' => $post['id'],
       'field_post_date' => $date->format(DateTimeItemInterface::DATE_STORAGE_FORMAT),
+      'field_embedded_image' => $sharedMediaCategory === ShareMediaCategory::IMAGE,
     ];
     if (!empty($media)) {
       $firstMedia = reset($media);
