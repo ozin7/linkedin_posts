@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Drupal\linkedin_posts\Service;
 
 use Psr\Log\LoggerInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\linkedin_posts\Client\LinkedinClient;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\linkedin_posts\Client\ShareMediaCategory;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 
 /**
  * Linkedin posts manager.
@@ -102,6 +103,7 @@ class LinkedinPostsManager {
       'title' => $cookedTitle,
       'body' => $body,
       'field_post_id' => $post['id'],
+      'field_post_date' => $date->format(DateTimeItemInterface::DATE_STORAGE_FORMAT),
     ];
     if (!empty($media)) {
       $firstMedia = reset($media);

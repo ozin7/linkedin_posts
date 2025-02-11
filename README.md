@@ -6,6 +6,7 @@ field ids:
 body - textarea
 field_post_id - text
 field_thumbnail - text
+field_post_date - date(date only)
 ```
 ## Linkedin configurations
 1. Create Linkedin app
