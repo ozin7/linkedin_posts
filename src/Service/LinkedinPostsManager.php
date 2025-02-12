@@ -115,7 +115,12 @@ class LinkedinPostsManager {
     }
     // Process LinkedIn articles which have extra entity.
     if ($sharedMediaCategory == ShareMediaCategory::URN_REFERENCE) {
-      // @todo implement linkedin article processing.
+      if (isset($media[0]['media'])) {
+        $mediaId = $media[0]['media'];
+        if (str_starts_with($mediaId, 'urn:li:multiPhoto:')) {
+          // $photos = $this->linkedinClient->getMultiplePhotos($mediaId);
+        }
+      }
     }
     return $values;
   }

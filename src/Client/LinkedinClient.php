@@ -29,9 +29,9 @@ class LinkedinClient {
     }
 
     $urn = "urn:li:organization:$organizationId";
-    $encoded_urn = rawurlencode($urn);
+    $encodedUrn = rawurlencode($urn);
     try {
-      $response = $this->client->request('GET', 'https://api.linkedin.com/v2/ugcPosts?q=authors&authors=List(' . $encoded_urn . ')&sortBy=CREATED', [
+      $response = $this->client->request('GET', 'https://api.linkedin.com/v2/ugcPosts?q=authors&authors=List(' . $encodedUrn . ')&sortBy=CREATED', [
         'headers' => [
           'Authorization' => 'Bearer ' . $token,
           'X-Restli-Protocol-Version' => '2.0.0',
@@ -46,6 +46,34 @@ class LinkedinClient {
       ]);
       return [];
     }
+  }
+
+  /**
+   * Get multiple photos.
+   * Require r_compliance permisisons.
+   */
+  public function getMultiplePhotos(string $postUrn): array {
+    $token = $this->oauthManager->getToken();
+    if (!$token) {
+      return [];
+    }
+    $encodedUrn = rawurlencode($postUrn);
+    try {
+      $response = $this->client->request('GET', 'https://api.linkedin.com/v2/ugcPosts/' . $encodedUrn . '?projection=(specificContent(com.linkedin.ugc.ShareContent(media*(media~multiPhoto(multiPhotoEntities*(actionableContent(content(value(com.linkedin.content.MediaContent(mediaType,media~digitalmediaAsset:playableStreams))))))))))', [
+        'headers' => [
+          'Authorization' => 'Bearer ' . $token,
+          'X-Restli-Protocol-Version' => '2.0.0',
+        ],
+      ]);
+
+      return json_decode($response->getBody()->getContents(), TRUE);
+    } catch (\Exception $e) {
+      $this->logger->error('Error fetching LinkedIn posts: @message', [
+        '@message' => $e->getMessage(),
+      ]);
+      return [];
+    }
+    return  [];
   }
 
 }
