@@ -9,4 +9,6 @@ function linkedin_posts_cron() {
   if ($linkedinOauth->needTokenRefresh()) {
     $linkedinOauth->refreshToken();
   }
+  // Import pposts from linkedin.
+  \Drupal::service('linkedin_posts.posts_manager')->importOrganizationPosts();
 }
